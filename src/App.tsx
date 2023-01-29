@@ -1,24 +1,33 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import Credits from './components/Credits';
 
 function App() {
+  const navigate = useNavigate();
+
+  const getInfo = () => {
+    axios.get(`http://www.boredapi.com/api/activity`)
+      .then((res) => {
+        if (res.data.error)
+          navigate('/something-went-wrong')
+        navigate('/result', {
+          state: res.data
+        })
+    })
+    .catch(() => {
+      navigate('/something-went-wrong')
+    })
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>Activity finder</h1>
+      <button onClick={getInfo}>Search!</button>
+      <p>Or... <a href='/advanced'>Advanced Search</a></p>
+      <Credits />
     </div>
   );
 }
